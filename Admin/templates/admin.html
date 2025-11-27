@@ -44,14 +44,18 @@
           <p>All products present in the inventory are listed below</p>
 
           <div class="card mt-4">
-            <div class="card-header">
+
+            <div class="card-header d-flex justify-content-between align-items-center">
+
               Products List
-              <a
-                href="{% url 'add_item'%}"
-                class="btn btn-success btn-sm float-end"
-                >+ Add New Product</a
-              >
-            </div>
+              <form method="GET" class="d-inline-block">
+                <input type="text" name="search" class="form-control form-control-sm d-inline-block" style="width: 200px;" placeholder="Search products..." value="{{ request.GET.search }}">
+                <button type="submit" class="btn btn-sm btn-primary">Search</button>
+              </form>
+              <a href="{% url 'add_item'%}" class="btn btn-success btn-sm">+ Add New Product</a>
+
+					  </div>
+
             <div class="card-body">
               <table class="table table-hover">
                 <thead class="table-dark">

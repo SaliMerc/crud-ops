@@ -4,6 +4,12 @@ from .models import Product
 # Create your views here.
 def admin(request):
     product=Product.objects.all()
+
+    # Search Functionality: By product name
+    search_query = request.GET.get('search')
+    if search_query:
+        product = product.filter(name__icontains=search_query)
+
     context={'products':product}
     return render(request, 'admin.html', context)
 
