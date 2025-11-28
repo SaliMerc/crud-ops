@@ -1,10 +1,23 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import Q
 from django.contrib import messages
 from .models import Product
 
 def admin(request):
-    product=Product.objects.all()
-    context={'products':product}
+    products=Product.objects.all()
+    
+    query = request.GET.get('q')
+    if query:
+        products = products.filter(
+            Q(name__icontains=query) | 
+            Q(description__icontains=query) |
+            Q(brand__icontains=query) |
+            Q(category__icontains=query)
+        )
+    context={
+        'products':products,
+        'query':query
+        }
     return render(request, 'admin.html', context)
 
 def add_item(request):
