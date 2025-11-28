@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from .models import Product
 
-# Create your views here.
 def admin(request):
     product=Product.objects.all()
     context={'products':product}
@@ -9,7 +9,6 @@ def admin(request):
 
 def add_item(request):
     if request.method == 'POST':
-        # Process the form data here
         try:
             name=request.POST.get('name')
             price=request.POST.get('price')
@@ -18,6 +17,7 @@ def add_item(request):
             brand=request.POST.get('brand')
             category=request.POST.get('category')
             quantity=request.POST.get('quantity')
+            image=request.FILES.get('image')
             
             Product.objects.create(
                 name=name,
@@ -25,7 +25,8 @@ def add_item(request):
                 description=description,
                 brand=brand,
                 category=category,
-                quantity=quantity
+                quantity=quantity,
+                image=image
             )
             return redirect('admin')
         except Exception as e:
@@ -41,11 +42,22 @@ def update_item(request, product_id):
     product=get_object_or_404(Product, id=product_id)
     context={'product':product}
     
+    if request.method == 'POST':
+        try:
+            product.name=request.POST.get('name')
+            product.price=request.POST.get('price')
+            product.description=request.POST.get('description')
+            
+            product.brand=request.POST.get('brand')
+            product.category=request.POST.get('category')
+            product.quantity=request.POST.get('quantity')
+            
+            if 'image' in request.FILES:
+                product.image=request.FILES.get('image')
+            
+            product.save()
+            return redirect('admin')
+        except Exception as e:
+            print(e)    
     
     return render (request, 'update_item.html', context)
-
-"""
-Please update your Product model by adding the following three fields: 
-brand, category (Take input from user, no dropdown), and quantity.
-After updating the model, ensure that each of these new fields is displayed correctly in your products table on the dashboard.
-"""
