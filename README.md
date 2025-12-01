@@ -16,7 +16,6 @@ How to Run Locally (Takes 5 Minutes)
 1. Clone the repo
 ```bash
 git clone https://github.com/SaliMerc/crud-ops.git
-cd crud-ops
 ```
 
 2. Create a virtual environment
