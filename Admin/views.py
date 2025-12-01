@@ -2,6 +2,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from .models import Product, Transaction
 
+from django_daraja.mpesa.core import MpesaClient
+from django.conf import settings
+
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
 def admin(request):
     products=Product.objects.all()
     
@@ -75,9 +82,11 @@ def update_item(request, product_id):
     
     return render (request, 'update_item.html', context)
 
+def payment_success(request):
+    return render(request, 'payment_success.html')
 
-def mpesa_payment(request):
-    return render(request, 'mpesa_payment.html')
+def payment_failed(request):
+    return render(request, 'payment_failed.html')
 
 def payments_made(request):
     transactions=Transaction.objects.all()
@@ -96,3 +105,101 @@ def payments_made(request):
         }
     return render(request, 'payments_made.html', context)
     
+
+def mpesa_payment(request):
+    if request.method == 'POST':
+        try:
+            customer_name=request.POST.get('customer_name')
+            customer_phone_number=request.POST.get('customer_phone_number')
+            transaction_amount=int(request.POST.get('transaction_amount'))
+            
+            mpesa_client = MpesaClient()
+            
+            account_reference = settings.MPESA_ACCOUNT_REFERENCE
+            transaction_desc = settings.MPESA_TRANSACTION_DESC
+            callback_url = settings.MPESA_CALLBACK_URL
+            response = mpesa_client.stk_push(
+                customer_phone_number, 
+                transaction_amount, 
+                account_reference, 
+                transaction_desc, 
+                callback_url
+            )
+            
+            response_data = response.json()
+            if response.status_code == 200:
+                checkout_request_id = response_data.get('CheckoutRequestID')
+                customer_message = response_data.get('CustomerMessage')
+
+                Transaction.objects.create(
+                    customer_name=customer_name,
+                    customer_phone_number=customer_phone_number,
+                    transaction_amount=transaction_amount,
+                    transaction_method='mpesa',
+                    transaction_result_description= customer_message,
+                    transaction_reference_number=checkout_request_id,
+                    transaction_status='pending',
+                    transaction_code='N/A'
+                )
+                print("M-Pesa STK Push initiated successfully.")
+            else:
+                print("Failed to initiate M-Pesa STK Push.")
+        except Exception as e:
+            print(e)
+    return render(request, 'mpesa_payment.html')
+
+
+@csrf_exempt
+def mpesa_callback(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Method not allowed"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+
+        stk_callback = data["Body"]["stkCallback"]
+        result_code = stk_callback["ResultCode"]
+        checkout_request_id = stk_callback["CheckoutRequestID"]
+
+        """Find the pending transaction"""
+        try:
+            transaction = Transaction.objects.get(
+                transaction_reference_number=checkout_request_id,
+                transaction_status='pending'
+            )
+        except Transaction.DoesNotExist:
+            return JsonResponse({"ResultCode": 0, "ResultDesc": "Accepted"})
+
+        """If a transaction is not successfull"""
+        if result_code != 0:
+            result_desc = stk_callback.get("ResultDesc")
+            transaction.transaction_status = 'failed'
+            transaction.transaction_result_description = result_desc
+            transaction.save()
+
+            return JsonResponse({"ResultCode": 0, "ResultDesc": "Accepted"})
+
+        """If transaction is successfull"""
+        result_desc = stk_callback.get("ResultDesc")
+        items = stk_callback["CallbackMetadata"]["Item"]  
+
+        mpesa_code = next((item["Value"] for item in items if item["Name"] == "MpesaReceiptNumber"), None)
+        phone_number = next((item["Value"] for item in items if item["Name"] == "PhoneNumber"), None)
+        amount = next((item["Value"] for item in items if item["Name"] == "Amount"), 0)
+
+        """Update the Transaction table"""
+        transaction.transaction_amount = amount
+        transaction.transaction_code = mpesa_code 
+        transaction.customer_phone_number = str(phone_number)
+        transaction.transaction_status = 'completed'
+        transaction.transaction_result_description = result_desc
+        transaction.save()
+        return JsonResponse({"ResultCode": 0, "ResultDesc": "Accepted"})
+
+    except Exception as e:
+        print("M-Pesa Callback Error:", str(e))
+        print("Raw payload:", request.body.decode('utf-8', errors='ignore'))
+        return JsonResponse({"ResultCode": 0, "ResultDesc": "Accepted"})
+
+
+

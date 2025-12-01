@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,12 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-=qc)3^y7&iyynzdi(!#1l3(^_eb9#lxla-7n_%bufxa%c+#a@4'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_daraja',
     'Admin'
 ]
 
@@ -130,3 +132,18 @@ MEDIA_URL ='/media/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+"""MPESA SETTINGS"""
+MPESA_ENVIRONMENT = config('MPESA_ENVIRONMENT')
+MPESA_CONSUMER_KEY = config('MPESA_CONSUMER_KEY')
+MPESA_CONSUMER_SECRET = config('MPESA_CONSUMER_SECRET')
+MPESA_SHORTCODE = config('MPESA_SHORTCODE')
+MPESA_EXPRESS_SHORTCODE = config('MPESA_EXPRESS_SHORTCODE')
+MPESA_SHORTCODE_TYPE = config('MPESA_SHORTCODE_TYPE')
+MPESA_PASSKEY = config('MPESA_PASSKEY')
+MPESA_INITIATOR_USERNAME = config('MPESA_INITIATOR_USERNAME')
+MPESA_INITIATOR_SECURITY_CREDENTIAL = config('MPESA_INITIATOR_SECURITY_CREDENTIAL')
+MPESA_CALLBACK_URL = config('MPESA_CALLBACK_URL')
+MPESA_ACCOUNT_REFERENCE = config('MPESA_ACCOUNT_REFERENCE')
+MPESA_TRANSACTION_DESC = config('MPESA_TRANSACTION_DESC')

@@ -40,7 +40,7 @@ class Transaction(models.Model):
     transaction_method= models.CharField(max_length=30, choices=CHOICES_TRANSACTION_METHOD, default='mpesa')
     
     transaction_status= models.CharField(max_length=20, choices=CHOICES_TRANSACTION_STATUS, default='pending')
-    transaction_code = models.CharField(max_length=100, unique=True)
+    transaction_code = models.CharField(max_length=100, blank=True, null=True)
     transaction_reference_number = models.CharField(max_length=100, unique=True)
     transaction_result_description = models.TextField(blank=True, null=True)
     transaction_date = models.DateTimeField(auto_now_add=True)

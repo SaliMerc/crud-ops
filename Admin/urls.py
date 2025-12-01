@@ -26,7 +26,10 @@ urlpatterns = [
     path('delete/<int:product_id>/', views.delete, name='delete'),
     path('update/<int:product_id>/', views.update_item, name='update'),
     
+    path('payment-processed/', views.payment_success, name='payment_success'),
+    path('payment-failed/', views.payment_failed, name='payment_failed'),
+    
     path('mpesa-payment/', views.mpesa_payment, name='mpesa_payment'),
     path('payments-made/', views.payments_made, name='payments_made'),
-    
+    path('callback/', views.mpesa_callback, name='mpesa_callback'),
 ]
