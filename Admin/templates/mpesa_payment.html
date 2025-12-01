@@ -1,0 +1,60 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+
+<main class="col-md-9 ms-sm-auto col-lg-10 content">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white">
+          <h5 class="mb-0">Make Payment</h5>
+        </div>
+
+        <div class="card-body">
+          <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="mb-3">
+              <label class="form-label">Customer Name</label>
+              <input
+                type="text"
+                name="customer_name"
+                class="form-control"
+                placeholder="Enter customer name"
+                required
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Phone Number</label>
+              <input
+                type="number"
+                name="customer_phone_number"
+                class="form-control"
+                placeholder="Enter the customer's phone number"
+                required
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Amount</label>
+              <input
+                type="number"
+                name="transaction_amount"
+                class="form-control"
+                placeholder="Enter amount"
+                required
+              />
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <a href="{% url 'admin' %}" class="btn btn-secondary">Cancel</a>
+              <button type="submit" class="btn btn-success">
+                Make Payment
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

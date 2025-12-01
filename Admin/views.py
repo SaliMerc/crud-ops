@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
-from .models import Product
+from .models import Product, Transaction
 
 def admin(request):
     products=Product.objects.all()
@@ -74,3 +74,25 @@ def update_item(request, product_id):
             print(e)    
     
     return render (request, 'update_item.html', context)
+
+
+def mpesa_payment(request):
+    return render(request, 'mpesa_payment.html')
+
+def payments_made(request):
+    transactions=Transaction.objects.all()
+    
+    query = request.GET.get('q')
+    if query:
+        transactions = transactions.filter(
+            Q(customer_name__icontains=query) | 
+            Q(transaction_status__icontains=query) |
+            Q(transaction_code__icontains=query) |
+            Q(customer_phone_number__icontains=query)
+        )
+    context={
+        'transactions':transactions,
+        'query':query
+        }
+    return render(request, 'payments_made.html', context)
+    

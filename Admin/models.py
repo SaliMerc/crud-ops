@@ -15,7 +15,7 @@ class Product(models.Model):
         return self.name
 
 
-class Transactions(models.Model):
+class Transaction(models.Model):
     """To store payment transactions made by users for products.
     In real-world applications, the transactions table would be linked to a User model and Products model to know who made a payment to which product. This can be achieved using ForeignKey relationships.
     Having the transaction method makes your table flexible to accommodate different payment methods.
