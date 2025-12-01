@@ -8,6 +8,7 @@ class Product(models.Model):
     brand=models.CharField(max_length=100, blank=True, null=True)
     category=models.CharField(max_length=100, blank=True, null=True)   
     quantity=models.IntegerField(default=0, blank=True, null=True)
+    
     image=models.ImageField(upload_to='product_images/', blank=True, null=True)
 
     def __str__(self):

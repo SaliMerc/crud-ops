@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
-from django.contrib import messages
 from .models import Product
 
 def admin(request):
@@ -30,6 +29,7 @@ def add_item(request):
             brand=request.POST.get('brand')
             category=request.POST.get('category')
             quantity=request.POST.get('quantity')
+            
             image=request.FILES.get('image')
             
             Product.objects.create(
