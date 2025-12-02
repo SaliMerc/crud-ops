@@ -85,7 +85,7 @@ Safaricom needs a public URL → use ngrok (free)
 3. Copy the https URL it shows (example: https://a1b2c3d4e5f6.ngrok.io)
 4. Update your `.env`:
    ```env
-   MPESA_CALLBACK_URL=https://ahsjwjw992.ngrok.io/mpesa/callback/
+   MPESA_CALLBACK_URL= e.g https://ahsjwjw992.ngrok.io/mpesa/callback/ (use the url for ngrok for local testing)
    ```
 5. Restart server → test payment 
 
@@ -100,7 +100,7 @@ MPESA_CALLBACK_URL=https://yourrealdomain.com/mpesa/callback/
 
 Project Structure
 ```
-crud-ops/
+DJANGOCRUD/
 ├── Admin/              → main app
 ├── media/          → media files
 ├── Shop/             → Project config
