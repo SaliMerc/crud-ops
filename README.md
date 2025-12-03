@@ -40,7 +40,7 @@ Create a .env file in the project root.
 Should be on the same level as the app
 ```
 
-Then edit the new `.env` file and fill in your M-Pesa details:
+Then edit the new `.env` file and fill in your M-Pesa details and also postgress db details (if using it):
 
 ```bash
 DEBUG=True
@@ -54,8 +54,27 @@ MPESA_PASSKEY=''
 MPESA_ENVIRONMENT=''
 MPESA_CALLBACK_URL=''
 
-MPESA_ACCOUNT_REFERENCE = ''
-MPESA_TRANSACTION_DESC = ''
+MPESA_ACCOUNT_REFERENCE= ''
+MPESA_TRANSACTION_DESC= ''
+
+#Postgress db credentials (get these from superbase after you create your db)
+"""
+Steps:
+In superbase, click on the db you just created
+At the top, look for a connect button and click on it
+In the modal that appears, change the type to python, and the method to transaction pooler
+Scroll down to connect to your database and click on view parameters
+Retrieve the db details from thee and add them to your .env file (only copy the values not keys)
+NB/ The password is the one you added when creating the database.
+NB/ Ensure you have installed python-decouple via pip install python-decouple and imported config at the top of settings.py file (from decouple import config) for this to work. 
+Alternatively, you can use other methods of retrieving credentials from .env file
+"""
+
+DB_NAME=''
+DB_USER=''
+DB_PASSWORD=''
+DB_HOST=''
+DB_PORT=''
 ```
 
 5. Run migrations & create admin
