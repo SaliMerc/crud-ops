@@ -77,6 +77,42 @@ DB_HOST=''
 DB_PORT=''
 ```
 
+```bash
+Steps:
+
+pip install django-role-permissions
+Add to settings.py
+INSTALLED_APPS = [
+    # ...
+    'rolepermissions',           # ← ADD THIS
+]
+ROLEPERMISSIONS_MODULE = 'Admin.roles'
+
+create a role.py and permissions.py files and define your roles
+
+'from rolepermissions.roles import AbstractUserRole
+
+class AdminRole(AbstractUserRole):
+    available_permissions = {
+        'can_access_admin': True,
+    }
+
+class Role1(AbstractUserRole):
+    available_permissions = {
+        'can_access_dashboard': True,
+        'can_view_payments': True,
+    }
+
+class Role2(AbstractUserRole):
+    available_permissions = {
+        'can_make_payment': True,
+        'can_view_own_transactions': True,
+    }'
+
+For the other implementations, check out model.py, permissions.py and views.py (signup and login functions)
+
+```
+
 5. Run migrations & create admin
 ```bash
 python manage.py makemigrations
