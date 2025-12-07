@@ -58,6 +58,10 @@ ROOT_URLCONF = 'Shop.urls'
 
 AUTH_USER_MODEL = 'Admin.CustomUser'
 
+"""Rolepermissions set up"""
+ROLEPERMISSIONS_MODULE = 'Admin.roles'
+ROLEPERMISSIONS_REGISTER_ADMIN = False
+
 
 TEMPLATES = [
     {
