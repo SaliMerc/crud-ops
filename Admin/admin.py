@@ -6,9 +6,9 @@ from .models import CustomUser, Product, Transaction
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
-    list_display = ('email', 'role', 'phone_number', 'city', 'date_joined', 'is_staff')
+    list_display = ('email', 'first_name', 'last_name', 'role', 'phone_number', 'city', 'date_joined', 'is_staff')
     list_filter = ('role', 'is_staff', 'is_superuser', 'date_joined')
-    search_fields = ('email', 'phone_number', 'city', 'country')
+    search_fields = ('email', 'first_name', 'last_name', 'phone_number', 'city', 'country')
     ordering = ('-date_joined',)
     
     fieldsets = (

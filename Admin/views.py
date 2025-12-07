@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from django.db.models import Q
-from .models import Product, Transaction
+from .models import Product, Transaction, CustomUser
+from django.db import IntegrityError
 
 from django_daraja.mpesa.core import MpesaClient
 from django.conf import settings
@@ -11,6 +13,10 @@ from django.views.decorators.csrf import csrf_exempt
 
 from django.contrib.auth.decorators import login_required
 from Admin.permissions import role_permission_required
+from django.contrib.auth import authenticate, login
+
+from Admin.roles import DriverRole
+from rolepermissions.roles import assign_role
 
 def admin(request):
     products=Product.objects.all()
@@ -92,9 +98,67 @@ def payment_failed(request):
     return render(request, 'payment_failed.html')
 
 def signup(request):
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        phone_number = request.POST.get('phone_number')
+        city = request.POST.get('city')
+        country = request.POST.get('country')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if not all([first_name, last_name, phone_number, email, password, confirm_password]):
+            messages.error(request, "Please fill in all required fields.")
+            return render(request, 'signup.html')
+
+        if password != confirm_password:
+            messages.error(request, "Passwords do not match!")
+            return render(request, 'signup.html')   
+
+        if CustomUser.objects.filter(email=email).exists():
+            messages.error(request, "This email is already registered.")
+            return render(request, 'signup.html')   
+
+        try:
+            user = CustomUser.objects.create_user(
+                username=email,
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+                phone_number=phone_number,
+                city=city,
+                country=country,
+                role = 'driver',
+            )
+            assign_role(user, DriverRole)
+            print("User created successfully:", user.email)
+
+            messages.success(request, f"Welcome, {first_name}! Your account has been created.")
+            return redirect('login')
+
+        except Exception as e:
+            print("Error creating user:", e)
+            messages.error(request, "Account creation failed. Please try again.")
+            return render(request, 'signup.html')
+
     return render(request, 'signup.html')
 
-def login(request):
+def login_view(request):   
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=email, password=password)
+        if user is not None:
+            login(request, user)   
+
+            if user.role == 'driver':  
+                return redirect('payments_made')
+            return redirect('')
+
+        messages.error(request, "Invalid email or password.")
     return render(request, 'login.html')
 
 @login_required

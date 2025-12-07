@@ -44,10 +44,10 @@
             <a href="{% url 'admin'%}">Manage Products</a>
             <a href="{% url 'mpesa_payment'%}">M-pesa Payment Form</a>
 
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and user.role == 'driver' %}
             <a href="{% url 'payments_made'%}">Payments Made</a>
             {% endif %}
-            
+
           </div>
         </nav>
         {% block content %} {% comment %} The items of the otehr pages will go
