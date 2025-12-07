@@ -9,6 +9,9 @@ import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
+from django.contrib.auth.decorators import login_required
+from Admin.permissions import role_permission_required
+
 def admin(request):
     products=Product.objects.all()
     
@@ -88,6 +91,8 @@ def payment_success(request):
 def payment_failed(request):
     return render(request, 'payment_failed.html')
 
+@login_required
+@role_permission_required('see_assigned_bins')
 def payments_made(request):
     transactions=Transaction.objects.all()
     

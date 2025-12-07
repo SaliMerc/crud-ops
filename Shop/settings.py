@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rolepermissions',
     'django_daraja',
     'Admin'
 ]
@@ -54,6 +55,9 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'Shop.urls'
+
+AUTH_USER_MODEL = 'Admin.CustomUser'
+
 
 TEMPLATES = [
     {
