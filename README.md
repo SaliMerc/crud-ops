@@ -78,6 +78,7 @@ DB_PORT=''
 ```
 
 ```bash
+# For role based access
 Steps:
 
 pip install django-role-permissions
