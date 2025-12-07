@@ -13,7 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from django.contrib.auth.decorators import login_required
 from Admin.permissions import role_permission_required
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 from Admin.roles import DriverRole
 from rolepermissions.roles import assign_role
@@ -160,6 +160,11 @@ def login_view(request):
 
         messages.error(request, "Invalid email or password.")
     return render(request, 'login.html')
+
+def logout_view(request):
+    logout(request)  
+    messages.success(request, "You have been logged out successfully.")
+    return redirect('login')
 
 @login_required
 @role_permission_required('see_assigned_bins')
