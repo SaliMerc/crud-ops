@@ -91,6 +91,12 @@ def payment_success(request):
 def payment_failed(request):
     return render(request, 'payment_failed.html')
 
+def signup(request):
+    return render(request, 'signup.html')
+
+def login(request):
+    return render(request, 'login.html')
+
 @login_required
 @role_permission_required('see_assigned_bins')
 def payments_made(request):
